@@ -4,7 +4,7 @@
 # documentaton
 ###
 
-# If you've never seen a shell script like this, look her for a basic startersguide on scripting
+# If you've never seen a bash script like this, look her for a basic startersguide on scripting
 # https://medium.com/tech-tajawal/writing-shell-scripts-the-beginners-guide-4778e2c4f609
 
 # The full usermanual on bash can be found here
@@ -12,6 +12,9 @@
 
 # I use this script on MacOSX, look here how to run this script on Windows 10
 # https://www.howtogeek.com/261591/how-to-create-and-run-bash-shell-scripts-on-windows-10/
+
+# this script depends on curl, a quick startersguide for curl can be found here
+# https://dev.to/iggredible/how-to-make-api-request-with-curl-kg8
 
 # this scripts uses the github rest api, documentation can be found here
 # https://docs.github.com/en/rest
@@ -60,5 +63,30 @@ echo
 ###
 
 # list full_name of all repo's (max 30) in organisation
-curl -i -u $username:$token https://api.github.com/orgs/$organisation/repos | grep full_name
+curl -u $username:$token https://api.github.com/orgs/$organisation/repos | grep full_name
 
+# move a repo to the archive
+from_organisation="emmaus-5v"
+to_organisation="emmaus-archief"
+from_repo="webshop-voorbeeld"
+to_repo="2021-5V-"$from_repo
+# change organisation
+curl -X POST -H "Accept: application/vnd.github.v3+json" \
+  https://api.github.com/repos/$from_organisation/$from_repo/transfer \
+  -d '{"new_owner":"'$to_organisation'"}'
+# change name of repo
+curl -X PATCH -H "Accept: application/vnd.github.v3+json" \
+  https://api.github.com/repos/$to_organisation/$from_repo \
+  -d '{"name":"'$to_repo'"}'
+
+# list outside collaborators (max 30) of a repo
+organisation="emmaus-5v"
+repo="webshop-in1-boris-LarsH-steijn"
+curl -u $username:$token https://api.github.com/repos/$organisation/$repo/collaborators?affiliation=outside
+
+
+# delete collaborator (alternative is to change permission)
+# curl \
+#  -X DELETE \
+#  -H "Accept: application/vnd.github.v3+json" \
+#  https://api.github.com/repos/octocat/hello-world/collaborators/USERNAME

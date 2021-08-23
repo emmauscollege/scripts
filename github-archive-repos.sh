@@ -46,10 +46,10 @@ fi
 status_code=$(curl -u @username:$token --write-out %{http_code} --silent --output /dev/null https://api.github.com/user)
 if [ $status_code -eq 200 ]
   then
-  curl -u @username:$token https://api.github.com/user | grep login
+  curl -H "Accept: application/vnd.github.v3+json" -u @username:$token https://api.github.com/user | grep login
   echo "Login to github succeeded"
 else
-  curl -i -u @username:$token https://api.github.com/user
+  curl -i -H "Accept: application/vnd.github.v3+json" -u @username:$token https://api.github.com/user
   echo "ERROR: login to github failed, maybe your username is invalid or your token expired"
   exit 1
 fi
@@ -63,37 +63,58 @@ echo
 ###
 
 # list full_name of all repo's (max 30) in organisation
-curl -u $username:$token https://api.github.com/orgs/$organisation/repos | grep full_name
+curl -H "Accept: application/vnd.github.v3+json" -u $username:$token https://api.github.com/orgs/$organisation/repos | jq -r ".[].full_name"
 
 # move a repo to the archive
+# organisation_old="emmaus-5v"
 organisation_old="emmaus-5v"
 organisation_new="emmaus-archief"
+# repo_old="webshop-in1-boris-LarsH-steijn"
 repo_old="webshop-voorbeeld"
 repo_new="2021-5V-"$repo_old
+
 # change organisation
-curl -X POST -H "Accept: application/vnd.github.v3+json" \
+curl -X POST -H "Accept: application/vnd.github.v3+json" -u @username:$token \
   https://api.github.com/repos/$from_organisation/$from_repo/transfer \
   -d '{"new_owner":"'$organisation_new'"}'
+
 # change name of repo
-curl -X PATCH -H "Accept: application/vnd.github.v3+json" \
+curl -X PATCH -H "Accept: application/vnd.github.v3+json" -u $username:$token \
   https://api.github.com/repos/$organisation_new/$repo_old \
   -d '{"name":"'$repo_new'"}'
 
-# list outside collaborators (max 30) of a repo
-organisation="emmaus-5v"
-repo="webshop-in1-boris-LarsH-steijn"
-curl -u $username:$token https://api.github.com/repos/$organisation/$repo/collaborators?affiliation=outside | jq ".[].login"
+# change permission of outside collaborators to read-only
+for collaborator in \
+  $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+    https://api.github.com/repos/$organisation_new/$repo_new/collaborators?affiliation=outside \
+    | jq -r ".[].login")
+  do
+   # change permission of collaborator to read(aka pull)
+   # more info at https://github.community/t/update-collaborator-permission/14579
+   echo "CHANGE https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator {\"permission\":\"pull\"}"
+   curl -X PUT -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+        https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator \
+        -d '{"permission":"pull"}'
+done
 
+###
+# other examples of code in comments
+###
+
+# list outside collaborators (max 30) of a repo
 # organisation="emmaus-5v"
 # repo="webshop-in1-boris-LarsH-steijn"
-for collaborator in \
-  $(curl -u $username:$token https://api.github.com/repos/$organisation/$repo/collaborators?affiliation=outside | jq ".[].login")
-  do
-    echo $collaborator
-done
+# curl -u $username:$token https://api.github.com/repos/$organisation/$repo/collaborators?affiliation=outside | jq -r ".[].login"
 
 # delete collaborator (alternative is to change permission)
 # curl \
 #  -X DELETE \
 #  -H "Accept: application/vnd.github.v3+json" \
 #  https://api.github.com/repos/octocat/hello-world/collaborators/USERNAME
+
+
+# change permission of collaborator to read(aka pull)
+# more info at https://github.community/t/update-collaborator-permission/14579
+# curl -X PUT -H "Accept: application/vnd.github.v3+json" \
+#  https://api.github.com/repos/$organisation/$repo/collaborators/$collaborator \
+#  -d '{"permission":"pull"}'

@@ -20,11 +20,11 @@
 # authentication
 ###
 
-# username and token to acces yout github account
-# for security reasons it is not allowed to use your github password
+# username and token to access your github account
+# for security reasons github doesn't allow to use your password to access the rest-api
 # instead, a token can be generated which acts as a replacement for your password
 # more info on https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication"
-organisation="emmaus-5v"
+organisation="emmauscollege"
 username="vangeest"
 # check if token is defined
 if [ -z $token ] 

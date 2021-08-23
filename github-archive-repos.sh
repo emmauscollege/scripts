@@ -66,24 +66,31 @@ echo
 curl -u $username:$token https://api.github.com/orgs/$organisation/repos | grep full_name
 
 # move a repo to the archive
-from_organisation="emmaus-5v"
-to_organisation="emmaus-archief"
-from_repo="webshop-voorbeeld"
-to_repo="2021-5V-"$from_repo
+organisation_old="emmaus-5v"
+organisation_new="emmaus-archief"
+repo_old="webshop-voorbeeld"
+repo_new="2021-5V-"$repo_old
 # change organisation
 curl -X POST -H "Accept: application/vnd.github.v3+json" \
   https://api.github.com/repos/$from_organisation/$from_repo/transfer \
-  -d '{"new_owner":"'$to_organisation'"}'
+  -d '{"new_owner":"'$organisation_new'"}'
 # change name of repo
 curl -X PATCH -H "Accept: application/vnd.github.v3+json" \
-  https://api.github.com/repos/$to_organisation/$from_repo \
-  -d '{"name":"'$to_repo'"}'
+  https://api.github.com/repos/$organisation_new/$repo_old \
+  -d '{"name":"'$repo_new'"}'
 
 # list outside collaborators (max 30) of a repo
 organisation="emmaus-5v"
 repo="webshop-in1-boris-LarsH-steijn"
-curl -u $username:$token https://api.github.com/repos/$organisation/$repo/collaborators?affiliation=outside
+curl -u $username:$token https://api.github.com/repos/$organisation/$repo/collaborators?affiliation=outside | jq ".[].login"
 
+# organisation="emmaus-5v"
+# repo="webshop-in1-boris-LarsH-steijn"
+for collaborator in \
+  $(curl -u $username:$token https://api.github.com/repos/$organisation/$repo/collaborators?affiliation=outside | jq ".[].login")
+  do
+    echo $collaborator
+done
 
 # delete collaborator (alternative is to change permission)
 # curl \

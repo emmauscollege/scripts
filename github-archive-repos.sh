@@ -1,5 +1,9 @@
 #! /bin/bash
 
+###
+# documentaton
+###
+
 # If you've never seen a shell script like this, look her for a basic startersguide on scripting
 # https://medium.com/tech-tajawal/writing-shell-scripts-the-beginners-guide-4778e2c4f609
 
@@ -8,6 +12,13 @@
 
 # I use this script on MacOSX, look here how to run this script on Windows 10
 # https://www.howtogeek.com/261591/how-to-create-and-run-bash-shell-scripts-on-windows-10/
+
+# this scripts uses the github rest api, documentation can be found here
+# https://docs.github.com/en/rest
+
+###
+# authentication
+###
 
 # username and token to acces yout github account
 # for security reasons it is not allowed to use your github password
@@ -43,6 +54,10 @@ fi
 echo
 echo
 echo
+
+###
+# do the actual work
+###
 
 # list full_name of all repo's (max 30) in organisation
 curl -i -u $username:$token https://api.github.com/orgs/$organisation/repos | grep full_name

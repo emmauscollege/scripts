@@ -15,7 +15,7 @@
 # more info on https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication"
 organisation="emmaus-5v"
 username="vangeest"
-# if token is not defined
+# check if token is defined
 if [ -z $token ] 
 then
 echo "ERROR: environment variable \"token\" not defined"
@@ -28,9 +28,21 @@ echo "export token"
 exit 1
 fi
 
-echo
+# check for a valid response from github
+status_code=$(curl -u @username:$token --write-out %{http_code} --silent --output /dev/null https://api.github.com/user)
+if [ $status_code -eq 200 ]
+  then
+  curl -u @username:$token https://api.github.com/user | grep login
+  echo "Login to github succeeded"
+else
+  curl -i -u @username:$token https://api.github.com/user
+  echo "ERROR: login to github failed, maybe your username is invalid or your token expired"
+  exit 1
+fi
 
-curl -i -u @username:$token https://api.github.com/emmauscollege/scripts
+echo
+echo
+echo
 
 # list full_name of all repo's (max 30) in organisation
 curl -i -u $username:$token https://api.github.com/orgs/$organisation/repos | grep full_name

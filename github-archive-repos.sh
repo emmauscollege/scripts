@@ -10,11 +10,15 @@
 # The full usermanual on bash can be found here
 # http://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html
 
-# I use this script on MacOSX, look here how to run this script on Windows 10
+# I run this script in the cloud on https://gitpod.io/ using a free account,
+# if you want to run it on Windows 10, look here
 # https://www.howtogeek.com/261591/how-to-create-and-run-bash-shell-scripts-on-windows-10/
 
 # this script depends on curl, a quick startersguide for curl can be found here
 # https://dev.to/iggredible/how-to-make-api-request-with-curl-kg8
+
+# this script depends on jq, a quick startersguide for qt can be found here
+# https://www.baeldung.com/linux/jq-command-json
 
 # this scripts uses the github rest api, documentation can be found here
 # https://docs.github.com/en/rest
@@ -66,19 +70,21 @@ echo
 curl -H "Accept: application/vnd.github.v3+json" -u $username:$token https://api.github.com/orgs/$organisation/repos | jq -r ".[].full_name"
 
 # move a repo to the archive
-# organisation_old="emmaus-5v"
+# example: organisation_old="emmaus-5v"
 organisation_old="emmaus-5v"
 organisation_new="emmaus-archief"
-# repo_old="webshop-in1-boris-LarsH-steijn"
+# example: repo_old="webshop-in1-boris-LarsH-steijn"
 repo_old="webshop-voorbeeld"
 repo_new="2021-5V-"$repo_old
 
 # change organisation
+echo "CHANGE ORGANISATION https://api.github.com/repos/$from_organisation/$from_repo/transfer {\"new_owner\":\"'$organisation_new'\"}"
 curl -X POST -H "Accept: application/vnd.github.v3+json" -u @username:$token \
   https://api.github.com/repos/$from_organisation/$from_repo/transfer \
   -d '{"new_owner":"'$organisation_new'"}'
 
 # change name of repo
+echo "CHANGE REPO https://api.github.com/repos/$organisation_new/$repo_old {\"name\":\"'$repo_new'\"}"
 curl -X PATCH -H "Accept: application/vnd.github.v3+json" -u $username:$token \
   https://api.github.com/repos/$organisation_new/$repo_old \
   -d '{"name":"'$repo_new'"}'
@@ -91,7 +97,7 @@ for collaborator in \
   do
    # change permission of collaborator to read(aka pull)
    # more info at https://github.community/t/update-collaborator-permission/14579
-   echo "CHANGE https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator {\"permission\":\"pull\"}"
+   echo "CHANGE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator {\"permission\":\"pull\"}"
    curl -X PUT -H "Accept: application/vnd.github.v3+json" -u $username:$token \
         https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator \
         -d '{"permission":"pull"}'

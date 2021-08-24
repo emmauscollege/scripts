@@ -89,19 +89,31 @@ curl -X PATCH -H "Accept: application/vnd.github.v3+json" -u $username:$token \
   https://api.github.com/repos/$organisation_new/$repo_old \
   -d '{"name":"'$repo_new'"}'
 
-# change permission of outside collaborators to read-only
+# remove outside collaborators (=toegang leerlingen verwijderen)
 for collaborator in \
   $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
     https://api.github.com/repos/$organisation_new/$repo_new/collaborators?affiliation=outside \
     | jq -r ".[].login")
   do
-   # change permission of collaborator to read(aka pull)
-   # more info at https://github.community/t/update-collaborator-permission/14579
-   echo "CHANGE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator {\"permission\":\"pull\"}"
-   curl -X PUT -H "Accept: application/vnd.github.v3+json" -u $username:$token \
-        https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator \
-        -d '{"permission":"pull"}'
+   # remove outside collaborator 
+   echo "REMOVE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator"
+   curl -X DELETE -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+        https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator
 done
+
+## change permission of outside collaborators to read-only (= alternatief voor leerlingen verwijderenre)
+#for collaborator in \
+#  $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+#    https://api.github.com/repos/$organisation_new/$repo_new/collaborators?affiliation=outside \
+#    | jq -r ".[].login")
+#  do
+#   # change permission of collaborator to read(aka pull)
+#   # more info at https://github.community/t/update-collaborator-permission/14579
+#   echo "CHANGE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator {\"permission\":\"pull\"}"
+#   curl -X PUT -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+#        https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator \
+#        -d '{"permission":"pull"}'
+#done
 
 ###
 # other examples of code in comments

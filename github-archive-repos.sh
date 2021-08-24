@@ -77,60 +77,65 @@ echo
 echo
 
 ###
-# do the actual work
+# do the actual work:
+# move repo's to the archive
 ###
 
-# list full_name of all repo's (max 30) in organisation
-curl -H "Accept: application/vnd.github.v3+json" -u $username:$token https://api.github.com/orgs/$organisation/repos | jq -r ".[].full_name"
-
-# move a repo to the archive
-# example: organisation_old="emmaus-5v"
+# settings
 organisation_old="emmaus-5v"
 organisation_new="emmaus-archief"
-# example: repo_old="webshop-in1-boris-LarsH-steijn"
-repo_old="webshop-voorbeeld"
-repo_new="2021-5V-"$repo_old
+repo_prefix="2021-5V-"
 
-# change organisation
-echo "CHANGE ORGANISATION https://api.github.com/repos/$organisation_old/$repo_old/transfer {\"new_owner\":\"'$organisation_new'\"}"
-nextstep
-curl -X POST -H "Accept: application/vnd.github.v3+json" -u @username:$token \
-  https://api.github.com/repos/$organisation_olds/$repo_old/transfer \
-  -d '{"new_owner":"'$organisation_new'"}'
-
-# change name of repo
-echo "CHANGE REPO https://api.github.com/repos/$organisation_new/$repo_old {\"name\":\"'$repo_new'\"}"
-nextstep
-curl -X PATCH -H "Accept: application/vnd.github.v3+json" -u $username:$token \
-  https://api.github.com/repos/$organisation_new/$repo_old \
-  -d '{"name":"'$repo_new'"}'
-
-# remove outside collaborators (=toegang leerlingen verwijderen)
-for collaborator in \
+# loop for all repo's (max 30) in organisation
+for repo_old in \
   $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
-    https://api.github.com/repos/$organisation_new/$repo_new/collaborators?affiliation=outside \
-    | jq -r ".[].login")
-  do
-   # remove outside collaborator 
-   echo "REMOVE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator"
-   nextstep
-   curl -X DELETE -H "Accept: application/vnd.github.v3+json" -u $username:$token \
-        https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator
-done
+    https://api.github.com/orgs/$organisation_old/repos \
+    | jq -r ".[].name")
+do
+  repo_new=$repo_prefix$repo_old
 
-## change permission of outside collaborators to read-only (= alternatief voor leerlingen verwijderenre)
-#for collaborator in \
-#  $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
-#    https://api.github.com/repos/$organisation_new/$repo_new/collaborators?affiliation=outside \
-#    | jq -r ".[].login")
-#  do
-#   # change permission of collaborator to read(aka pull)
-#   # more info at https://github.community/t/update-collaborator-permission/14579
-#   echo "CHANGE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator {\"permission\":\"pull\"}"
-#   curl -X PUT -H "Accept: application/vnd.github.v3+json" -u $username:$token \
-#        https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator \
-#        -d '{"permission":"pull"}'
-#done
+  # change organisation
+  echo "CHANGE ORGANISATION https://api.github.com/repos/$organisation_old/$repo_old/transfer {\"new_owner\":\"'$organisation_new'\"}"
+  nextstep
+  curl -X POST -H "Accept: application/vnd.github.v3+json" -u @username:$token \
+    https://api.github.com/repos/$organisation_olds/$repo_old/transfer \
+    -d '{"new_owner":"'$organisation_new'"}'
+
+  # change name of repo
+  echo "CHANGE REPO https://api.github.com/repos/$organisation_new/$repo_old {\"name\":\"'$repo_new'\"}"
+  nextstep
+  curl -X PATCH -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+    https://api.github.com/repos/$organisation_new/$repo_old \
+    -d '{"name":"'$repo_new'"}'
+
+  # remove outside collaborators (=toegang leerlingen verwijderen)
+  for collaborator in \
+    $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+      https://api.github.com/repos/$organisation_new/$repo_new/collaborators?affiliation=outside \
+      | jq -r ".[].login")
+  do
+    # remove outside collaborator 
+    echo "REMOVE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator"
+    nextstep
+    curl -X DELETE -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+         https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator
+  done
+
+  ## change permission of outside collaborators to read-only (= alternatief voor leerlingen verwijderenre)
+  #for collaborator in \
+  #  $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+  #    https://api.github.com/repos/$organisation_new/$repo_new/collaborators?affiliation=outside \
+  #    | jq -r ".[].login")
+  #  do
+  #   # change permission of collaborator to read(aka pull)
+  #   # more info at https://github.community/t/update-collaborator-permission/14579
+  #   echo "CHANGE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator {\"permission\":\"pull\"}"
+  #   curl -X PUT -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+  #        https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator \
+  #        -d '{"permission":"pull"}'
+  #done
+
+done
 
 ###
 # other examples of code in comments

@@ -24,21 +24,6 @@ target_organisation="emmaus-4h"
 private="true"
 
 ###
-# definitions
-###
-
-# function that asks for user confirmation to allow step by step execution of script
-steps=0
-function nextstep {
-  if [ $steps -le 0 ]
-  then
-    read -p "How many steps (CHANGES, ADDITIONS, REMOVALS etc) do you want to do untill next pause : " steps
-  fi
-  steps=$(($steps - 1))
-  echo $steps" steps left"
-}
-
-###
 # authentication
 ###
 

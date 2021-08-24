@@ -1,9 +1,12 @@
 #! /bin/bash
 
+# THIS SCRIPT IS NOT TESTED AND NOT FINISHED
+
 ###
-# documentation
+# documentaton
 # adjust settings below
-# see README.md for references to relevant documentation
+# usage: github-create-repos < repos.txt
+# input: names of repo's in repos.txt, one repo per line
 ###
 
 ###
@@ -12,11 +15,13 @@
 
 # username to access github
 username="vangeest"
-# move repos from organisation_old to organisation_new
-organisation_old="emmaus-5h"
-organisation_new="emmaus-archief"
-# add prefix before repo-name after moving it to the new archive
-repo_prefix="2021-5H-"
+# location/name of template
+template_organisation="emmauscollege"
+template_repo="4H-website-template"
+# location where repo is created
+target_organisation="emmaus-4h"
+# "true" creates private repo, "false" creates public repo
+private="true"
 
 ###
 # definitions
@@ -41,7 +46,8 @@ function nextstep {
 # for security reasons github doesn't allow to use your password to access the rest-api
 # instead, a token can be generated which acts as a replacement for your password
 # more info on https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication"
-
+organisation="emmauscollege"
+username="vangeest"
 # check if token is defined
 if [ -z $token ] 
 then
@@ -73,10 +79,26 @@ echo
 
 ###
 # do the actual work:
-# move repo's to the archive
+# create repo's from a template
 ###
 
-# loop for all repo's (max 100 allowed) in organisation
+# loop for all repo's read from stdin
+while read repo
+do
+  # create repo from template
+  echo "CREATE REPO https://api.github.com/repos/$template_organisation/$template_repo/generate"'{"name":"'$repo'","private":"'$private'"}'
+  nextstep
+  curl -X POST -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+    https://api.github.com/repos/$template_organisation/$template_repo/generate \
+    -d '{"name":"'$repo'","private":"'$private'"}'
+  # wait some time (work around to prevent "Not Found" errors in next curl statement)
+  sleep 2
+
+done
+
+exit
+##################################
+
 for repo_old in \
   $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
     https://api.github.com/orgs/$organisation_old/repos?per_page=100 \

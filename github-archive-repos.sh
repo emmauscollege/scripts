@@ -92,17 +92,17 @@ for repo_old in \
     https://api.github.com/orgs/$organisation_old/repos \
     | jq -r ".[].name")
 do
-  repo_new=$repo_prefix$repo_old
-
+  
   # change organisation
-  echo "CHANGE ORGANISATION https://api.github.com/repos/$organisation_old/$repo_old/transfer {\"new_owner\":\"'$organisation_new'\"}"
+  echo "CHANGE ORGANISATION https://api.github.com/repos/$organisation_old/$repo_old/transfer"'{"new_owner":"'$organisation_new'"}'
   nextstep
-  curl -X POST -H "Accept: application/vnd.github.v3+json" -u @username:$token \
-    https://api.github.com/repos/$organisation_olds/$repo_old/transfer \
+  curl -X POST -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+    https://api.github.com/repos/$organisation_old/$repo_old/transfer \
     -d '{"new_owner":"'$organisation_new'"}'
 
   # change name of repo
-  echo "CHANGE REPO https://api.github.com/repos/$organisation_new/$repo_old {\"name\":\"'$repo_new'\"}"
+  repo_new=$repo_prefix$repo_old
+  echo "CHANGE REPO https://api.github.com/repos/$organisation_new/$repo_old"'{"name":"'$repo_new'"}'
   nextstep
   curl -X PATCH -H "Accept: application/vnd.github.v3+json" -u $username:$token \
     https://api.github.com/repos/$organisation_new/$repo_old \
@@ -115,7 +115,7 @@ do
       | jq -r ".[].login")
   do
     # remove outside collaborator 
-    echo "REMOVE COLLABORATOR https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator"
+    echo "REMOVE COLLABORATOR https://api.github.com/repos/'$organisation_new'/'$repo_new/collaborators/$collaborator"
     nextstep
     curl -X DELETE -H "Accept: application/vnd.github.v3+json" -u $username:$token \
          https://api.github.com/repos/$organisation_new/$repo_new/collaborators/$collaborator

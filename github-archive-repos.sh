@@ -99,6 +99,8 @@ do
   curl -X POST -H "Accept: application/vnd.github.v3+json" -u $username:$token \
     https://api.github.com/repos/$organisation_old/$repo_old/transfer \
     -d '{"new_owner":"'$organisation_new'"}'
+  # wait some time (work around to prevent "Not Found" errors in next curl statement)
+  sleep 2
 
   # change name of repo
   repo_new=$repo_prefix$repo_old
@@ -107,6 +109,8 @@ do
   curl -X PATCH -H "Accept: application/vnd.github.v3+json" -u $username:$token \
     https://api.github.com/repos/$organisation_new/$repo_old \
     -d '{"name":"'$repo_new'"}'
+  # wait some time (work around to prevent "Not Found" errors in next curl statement)
+  sleep 2
 
   # remove outside collaborators (=toegang leerlingen verwijderen)
   for collaborator in \

@@ -1,7 +1,5 @@
 #! /bin/bash
 
-# THIS SCRIPT IS NOT TESTED
-
 ###
 # documentaton
 # purpose: create repos from template with (groups of) students added as collaborators
@@ -88,19 +86,21 @@ echo
 # loop for all lines with repo and user read from stdin 
 while read repo user
 do
-  # create repo from template (assuming is will fail if it already exists)
-  echo "CREATE REPO https://api.github.com/repos/$template_organisation/$template_repo/generate"'{"name":"'$repo'","private":"'$private'"}'
-  nextstep
-  curl -X POST -H "Accept: application/vnd.github.v3+json" -u $username:$token \
+  echo "repo:"$repo
+  echo "user:"$user
+  # create repo from template (it will fail if it already exists, but this will be ignored)
+  echo "CREATE REPO https://api.github.com/repos/$template_organisation/$template_repo/generate"'{"owner":"'$target_organisation'","name":"'$repo'","private":'$private'}'
+  curl -X POST -H "Accept: application/vnd.github.baptiste-preview+json" -u $username:$token \
     https://api.github.com/repos/$template_organisation/$template_repo/generate \
-    -d '{"name":"'$repo'","private":"'$private'"}'
+    -d '{"owner":"'$target_organisation'","name":"'$repo'","private":'$private'}'
   # wait some time (work around to prevent "Not Found" errors in next curl statement)
   sleep 2
 
   # add user as collaborator (if user already is collaborator, then permissions will be updated)
   # more info at https://github.community/t/update-collaborator-permission/14579
   # user will be invited via email by github and needs to accept the invitation
-  curl -X PUT -H "Accept: application/vnd.github.v3+json" \
-       https://api.github.com/repos/$target_organisation/$repo/collaborators/$user \
-       -d '{"permission":"push"}'
+  echo "ADD USER https://api.github.com/repos/$target_organisation/$repo/collaborators/$user"'{"permission":"push"}'     
+  curl -X PUT -H "Accept: application/vnd.github.v3+json" -u $username:$token\
+       https://api.github.com/repos/$target_organisation/$repo/collaborators/$user 
+       #-d '{"permission":"push"}'
 done

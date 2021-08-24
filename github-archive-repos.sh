@@ -82,7 +82,7 @@ echo
 ###
 
 # settings
-organisation_old="emmaus-archief"
+organisation_old="emmaus-5v"
 organisation_new="emmaus-archief"
 repo_prefix="2021-5V-"
 

@@ -82,15 +82,15 @@ echo
 ###
 
 # settings
-organisation_old="emmaus-5v"
+organisation_old="emmaus-archief"
 organisation_new="emmaus-archief"
 repo_prefix="2021-5V-"
 
-# loop for all repo's (max 30) in organisation
+# loop for all repo's (max 100 allowed) in organisation
 for repo_old in \
   $(curl -H "Accept: application/vnd.github.v3+json" -u $username:$token \
-    https://api.github.com/orgs/$organisation_old/repos \
-    | jq -r ".[].name")
+    https://api.github.com/orgs/$organisation_old/repos?per_page=100 \
+    | jq -r ".[].name" )
 do
   
   # change organisation

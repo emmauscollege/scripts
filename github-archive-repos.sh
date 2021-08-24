@@ -27,6 +27,8 @@
 ###
 # definitions
 ###
+
+# function that asks for user confirmation to allow step by step execution of script
 steps=0
 function nextstep {
   if [ $steps -le 0 ]
@@ -82,9 +84,9 @@ echo
 ###
 
 # settings
-organisation_old="emmaus-5v"
+organisation_old="emmaus-5h"
 organisation_new="emmaus-archief"
-repo_prefix="2021-5V-"
+repo_prefix="2021-5H-"
 
 # loop for all repo's (max 100 allowed) in organisation
 for repo_old in \

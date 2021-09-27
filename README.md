@@ -3,23 +3,23 @@ This repo contains some scripts that we (Emmauscollege Rotterdam, informatica se
 
 ## Documentation
 
-If you've never seen a bash script, look her for a basic startersguide on scripting \
+If you've never seen a bash script, look her for a basic startersguide on scripting<br>
 https://medium.com/tech-tajawal/writing-shell-scripts-the-beginners-guide-4778e2c4f609
 
-The full usermanual on bash can be found here \
+The full usermanual on bash can be found here<br>
 http://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html
 
-I run these scripts in the cloud on https://gitpod.io/ using a free account, \
-if you want to run it on Windows 10, look here \
+I run these scripts in the cloud on https://gitpod.io/ using a free account,<br>
+if you want to run it on Windows 10, look here<br>
 https://www.howtogeek.com/261591/how-to-create-and-run-bash-shell-scripts-on-windows-10/
 
-These scripts depends on curl, a quick startersguide for curl can be found here \
+These scripts depends on curl, a quick startersguide for curl can be found here<br>
 https://dev.to/iggredible/how-to-make-api-request-with-curl-kg8
 
-These scripts depends on jq, a quick startersguide for qt can be found here \
+These scripts depends on jq, a quick startersguide for qt can be found here<br>
 https://www.baeldung.com/linux/jq-command-json
 
-These scripts use the github rest api, documentation can be found here \
+These scripts use the github rest api, documentation can be found here<br>
 https://docs.github.com/en/rest
 
 ## Disclaimer

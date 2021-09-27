@@ -21,7 +21,7 @@ template_repo="5HVemc-game-template"
 # location where repo is created
 target_organisation="emmaus-emc"
 # "true" creates private repo, "false" creates public repo
-private="true"
+private="false"
 
 ###
 # authentication

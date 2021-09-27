@@ -4,7 +4,7 @@
 # documentaton
 # purpose: create repos from template with (groups of) students added as collaborators
 # before use: adjust settings below
-# usage: github-create-repos < repos.txt
+# usage: ./github-create-repos.sh < repos.txt
 # input: repos.txt contains name of repo and name of user on each line
 #        the same repo may be used on multiple lines
 ###
@@ -16,10 +16,10 @@
 # username to access github, a corresponding token needs to be set as environment variabel
 username="vangeest"
 # location/name of template
-template_organisation="emmauscollege"
-template_repo="4H-website-template"
+template_organisation="emmaus-emc"
+template_repo="5HVemc-game-template"
 # location where repo is created
-target_organisation="emmaus-4h"
+target_organisation="emmaus-emc"
 # "true" creates private repo, "false" creates public repo
 private="true"
 
@@ -31,7 +31,7 @@ private="true"
 # for security reasons github doesn't allow to use your password to access the rest-api
 # instead, a token can be generated which acts as a replacement for your password
 # more info on https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication"
-organisation="emmauscollege"
+organisation="emmaus-emc"
 username="vangeest"
 # check if token is defined
 if [ -z $token ] 

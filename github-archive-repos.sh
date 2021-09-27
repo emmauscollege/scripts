@@ -2,6 +2,7 @@
 
 ###
 # documentation
+# usage: ./github-achive-repos.sh 
 # adjust settings below
 # see README.md for references to relevant documentation
 ###

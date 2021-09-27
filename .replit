@@ -1,0 +1,2 @@
+language = "bash"
+run = "echo Usage of these scripts: type your command in the Shell"

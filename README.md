@@ -26,4 +26,4 @@ https://docs.github.com/en/rest
 
 Use at your own risk! The author is a teacher, not a programmer.
 
-Keep this repo private to prevent public availability of student-account-names being used in input-files for the scripts
+Do not save files in the repo with student-account-names being used in input-files for the scripts, as you don't want those to become public

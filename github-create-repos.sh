@@ -16,10 +16,10 @@
 # username to access github, a corresponding token needs to be set as environment variabel
 username="vangeest"
 # location/name of template
-template_organisation="emmaus-emc"
-template_repo="5HVemc-game-template"
+template_organisation="emmauscollege"
+template_repo="5HV-webshop-template"
 # location where repo is created
-target_organisation="emmaus-emc"
+target_organisation="emmaus-5h"
 # "true" creates private repo, "false" creates public repo
 private="false"
 
@@ -31,7 +31,6 @@ private="false"
 # for security reasons github doesn't allow to use your password to access the rest-api
 # instead, a token can be generated which acts as a replacement for your password
 # more info on https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api#authentication"
-organisation="emmaus-emc"
 username="vangeest"
 # check if token is defined
 if [ -z $token ] 
